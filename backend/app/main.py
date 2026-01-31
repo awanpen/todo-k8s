@@ -30,6 +30,7 @@ app.include_router(tasks_router)
 
 
 @app.get("/")
+@app.head("/")
 def root() -> dict:
     """Root endpoint."""
     return {
@@ -40,6 +41,7 @@ def root() -> dict:
 
 
 @app.get("/health")
+@app.head("/health")
 def health_check() -> dict:
     """Health check endpoint."""
     return {"status": "healthy"}
