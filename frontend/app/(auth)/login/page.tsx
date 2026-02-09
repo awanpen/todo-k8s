@@ -85,12 +85,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             {/* Error Message */}
             {error && (
-              <div className="rounded bg-neon-pink/10 p-4 border border-neon-pink/50 animate-slideInLeft shadow-[0_0_15px_rgba(255,0,110,0.3)]">
+              <div className="rounded bg-neon-pink/20 p-4 border-2 border-neon-pink animate-slideInLeft shadow-[0_0_20px_rgba(255,0,110,0.5)]">
                 <div className="flex items-center gap-3">
-                  <span className="text-neon-pink text-xl animate-pulse">⚠</span>
+                  <span className="text-neon-pink text-2xl animate-pulse">⚠</span>
                   <div className="flex-1">
-                    <p className="text-sm text-neon-pink font-mono font-semibold">[AUTHENTICATION FAILED]</p>
-                    <p className="text-xs text-neon-pink/80 font-mono mt-1">{error}</p>
+                    <p className="text-base text-neon-pink font-mono font-bold">[AUTHENTICATION FAILED]</p>
+                    <p className="text-sm text-neon-pink font-mono mt-2 leading-relaxed">{error}</p>
                   </div>
                 </div>
               </div>

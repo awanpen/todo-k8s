@@ -42,7 +42,12 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response?.status === 401) {
+        // Only redirect to login if it's NOT a login or register request
+        // (those should handle their own 401 errors)
+        const isAuthEndpoint = error.config?.url?.includes('/api/auth/login') || 
+                               error.config?.url?.includes('/api/auth/register');
+        
+        if (error.response?.status === 401 && !isAuthEndpoint) {
           if (typeof window !== "undefined") {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
