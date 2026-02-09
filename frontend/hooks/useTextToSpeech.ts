@@ -40,15 +40,33 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
       if (window.speechSynthesis.onvoiceschanged !== undefined) {
         window.speechSynthesis.onvoiceschanged = loadVoices;
       }
+
+      // Cleanup function to cancel any ongoing speech when component unmounts
+      return () => {
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+        }
+      };
     }
   }, []);
 
   const speak = useCallback((text: string) => {
     if (!isSupported || !text) return;
 
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+    // Cancel any ongoing speech with a small delay to prevent interruption errors
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      
+      // Wait a bit before starting new speech to avoid interruption error
+      setTimeout(() => {
+        startSpeech(text);
+      }, 100);
+    } else {
+      startSpeech(text);
+    }
+  }, [isSupported, lang, rate, pitch, volume, voice]);
 
+  const startSpeech = useCallback((text: string) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     utterance.rate = rate;
@@ -65,21 +83,27 @@ export function useTextToSpeech(options: UseTextToSpeechOptions = {}) {
 
     utterance.onend = () => {
       setIsSpeaking(false);
+      utteranceRef.current = null;
     };
 
     utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event);
+      // Only log non-interrupted errors to avoid console spam
+      if (event.error !== 'interrupted' && event.error !== 'canceled') {
+        console.error('Speech synthesis error:', event);
+      }
       setIsSpeaking(false);
+      utteranceRef.current = null;
     };
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [isSupported, lang, rate, pitch, volume, voice]);
+  }, [lang, rate, pitch, volume, voice]);
 
   const cancel = useCallback(() => {
     if (isSupported) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
+      utteranceRef.current = null;
     }
   }, [isSupported]);
 
