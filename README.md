@@ -403,12 +403,6 @@ This project is open source and available under the [MIT License](LICENSE).
 - [Next.js](https://nextjs.org/) - For the React framework
 - [Kubernetes](https://kubernetes.io/) - For container orchestration
 
-## 📞 Support
-
-- 📖 Read [HOW_IT_WORKS.md](HOW_IT_WORKS.md) for detailed explanations
-- 🐛 [Report issues](https://github.com/yourusername/todo-app/issues)
-- 💬 [Discussions](https://github.com/yourusername/todo-app/discussions)
-
 ## 🗺️ Roadmap
 
 - [ ] Add task categories and tags
