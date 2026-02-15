@@ -230,37 +230,136 @@ class AIAgent:
         ]
 
     async def _call_mcp_tool(self, tool_name: str, arguments: dict[str, Any], db: Session) -> str:
-        """Call an MCP tool via HTTP and return the result.
+        """Call task management functions directly via database.
         
         Args:
             tool_name: Name of the tool to call
             arguments: Arguments to pass to the tool
-            db: Database session (not used when calling via HTTP)
+            db: Database session
             
         Returns:
             The tool result as a string
         """
+        from app.models.task import Task
+        from app.models.user import User
+        from datetime import datetime, date
+        
         try:
-            mcp_client = get_mcp_client()
-            result = await mcp_client.call_tool(tool_name, arguments)
+            user_id = arguments.get("user_id")
             
-            # Extract the content from the MCP response
-            if isinstance(result, dict):
-                # Handle different response formats
-                if "content" in result:
-                    content = result["content"]
-                    if isinstance(content, list) and len(content) > 0:
-                        if isinstance(content[0], dict) and "text" in content[0]:
-                            return content[0]["text"]
-                        return str(content[0])
-                    return str(content)
-                elif "result" in result:
-                    return str(result["result"])
-                return str(result)
+            # Verify user exists
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return f"Error: User with ID {user_id} not found"
             
-            return str(result)
+            if tool_name == "create_task":
+                task = Task(
+                    title=arguments["title"],
+                    description=arguments.get("description"),
+                    user_id=user_id,
+                    priority=arguments.get("priority", "medium"),
+                    category=arguments.get("category", "other"),
+                    due_date=datetime.strptime(arguments["due_date"], "%Y-%m-%d").date() if arguments.get("due_date") else None,
+                    completed=False
+                )
+                db.add(task)
+                db.commit()
+                db.refresh(task)
+                return f"✓ Task created successfully! ID: {task.id}, Title: {task.title}"
+            
+            elif tool_name == "list_tasks":
+                query = db.query(Task).filter(Task.user_id == user_id)
+                if "completed" in arguments:
+                    query = query.filter(Task.completed == arguments["completed"])
+                tasks = query.all()
+                
+                if not tasks:
+                    return "No tasks found."
+                
+                result = f"Found {len(tasks)} task(s):\n"
+                for task in tasks:
+                    status = "✓" if task.completed else "○"
+                    result += f"\n[{status}] ID: {task.id} | {task.title}"
+                    if task.due_date:
+                        result += f" | Due: {task.due_date}"
+                    result += f" | Priority: {task.priority} | Category: {task.category}"
+                return result
+            
+            elif tool_name == "get_task":
+                task_id = arguments["task_id"]
+                task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+                if not task:
+                    return f"Task with ID {task_id} not found"
+                
+                status = "✓ Completed" if task.completed else "○ Pending"
+                return f"""Task Details:
+ID: {task.id}
+Title: {task.title}
+Description: {task.description or 'N/A'}
+Status: {status}
+Priority: {task.priority}
+Category: {task.category}
+Due Date: {task.due_date or 'Not set'}
+Created: {task.created_at}"""
+            
+            elif tool_name == "update_task":
+                task_id = arguments["task_id"]
+                task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+                if not task:
+                    return f"Task with ID {task_id} not found"
+                
+                if "title" in arguments:
+                    task.title = arguments["title"]
+                if "description" in arguments:
+                    task.description = arguments["description"]
+                if "completed" in arguments:
+                    task.completed = arguments["completed"]
+                if "priority" in arguments:
+                    task.priority = arguments["priority"]
+                if "category" in arguments:
+                    task.category = arguments["category"]
+                if "due_date" in arguments:
+                    task.due_date = datetime.strptime(arguments["due_date"], "%Y-%m-%d").date()
+                
+                db.commit()
+                return f"✓ Task {task_id} updated successfully!"
+            
+            elif tool_name == "delete_task":
+                task_id = arguments["task_id"]
+                task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+                if not task:
+                    return f"Task with ID {task_id} not found"
+                
+                title = task.title
+                db.delete(task)
+                db.commit()
+                return f"✓ Task '{title}' deleted successfully!"
+            
+            elif tool_name == "mark_task_complete":
+                task_id = arguments["task_id"]
+                task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+                if not task:
+                    return f"Task with ID {task_id} not found"
+                
+                task.completed = True
+                db.commit()
+                return f"✓ Task '{task.title}' marked as complete!"
+            
+            elif tool_name == "mark_task_incomplete":
+                task_id = arguments["task_id"]
+                task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
+                if not task:
+                    return f"Task with ID {task_id} not found"
+                
+                task.completed = False
+                db.commit()
+                return f"○ Task '{task.title}' marked as incomplete!"
+            
+            else:
+                return f"Unknown tool: {tool_name}"
+                
         except Exception as e:
-            return f"Error calling MCP tool {tool_name}: {str(e)}"
+            return f"Error executing {tool_name}: {str(e)}"
 
     def chat(self, user_message: str, conversation_history: list[dict[str, str]], user_id: int, db: Session) -> str:
         """

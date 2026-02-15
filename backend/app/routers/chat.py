@@ -122,12 +122,28 @@ def chat(
         # Log the error with more details for debugging
         import traceback
         error_details = traceback.format_exc()
-        print(f"Error in AI agent: {e}")
-        print(f"Full traceback:\n{error_details}")
-        assistant_response = (
-            "I'm sorry, I encountered an error processing your request. "
-            "Please try again or contact support if the issue persists."
-        )
+        error_type = type(e).__name__
+        print(f"[CHATBOT ERROR] Type: {error_type}")
+        print(f"[CHATBOT ERROR] Message: {e}")
+        print(f"[CHATBOT ERROR] Full traceback:\n{error_details}")
+        
+        # Provide more specific error messages
+        if "rate" in str(e).lower() or "quota" in str(e).lower():
+            assistant_response = (
+                "⚠️ The AI service is currently experiencing high demand. "
+                "Please wait a moment and try again."
+            )
+        elif "connection" in str(e).lower() or "timeout" in str(e).lower():
+            assistant_response = (
+                "⚠️ Unable to connect to the AI service. "
+                "Please check your internet connection and try again."
+            )
+        else:
+            assistant_response = (
+                f"⚠️ Error: {error_type}\n\n"
+                "I'm sorry, I encountered an error processing your request. "
+                "Please try again or contact support if the issue persists."
+            )
     
     # Save assistant message
     assistant_message = ConversationMessage(
