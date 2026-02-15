@@ -84,7 +84,7 @@ frontend:
       memory: "512Mi"
       cpu: "500m"
   env:
-    nextPublicApiUrl: "http://backend:8000"
+    nextPublicApiUrl: "http://192.168.49.2:30734"
     nodeEnv: "production"
   autoscaling:
     enabled: false

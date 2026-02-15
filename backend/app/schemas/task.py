@@ -1,7 +1,7 @@
 """Task-related Pydantic schemas."""
 
 from datetime import datetime, date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from app.models.task import TaskPriority, TaskCategory
 
 
@@ -39,5 +39,13 @@ class TaskResponse(BaseModel):
     user_id: int
     created_at: datetime
     updated_at: datetime
+
+    @field_validator('due_date', mode='before')
+    @classmethod
+    def convert_datetime_to_date(cls, v):
+        """Convert datetime to date if needed."""
+        if isinstance(v, datetime):
+            return v.date()
+        return v
 
     model_config = {"from_attributes": True}
